@@ -8,8 +8,6 @@
 
 ' source for zxdb-dl - em00k/2021
 
-#define NEX 
-
 ' border 0 
 
 backupsysvar() 
@@ -26,18 +24,18 @@ ShowLayer2(0)
 
 '-- Reg setup 
 asm 
-    nextreg NEXT_RESET_NR_02,0              		; wifi on 
-    nextreg PERIPHERAL_3_NR_08,$fe              		; no contention 
-    nextreg TURBO_CONTROL_NR_07,3                       ; 28mhz 
-    nextreg CLIP_TILEMAP_NR_1B,0                        ; Tilemap clipping 
-    nextreg CLIP_TILEMAP_NR_1B,159
-    nextreg CLIP_TILEMAP_NR_1B,0
-    nextreg CLIP_TILEMAP_NR_1B,255
-    NextReg TILEMAP_DEFAULT_ATTR_NR_6C,%00000000        ; tilemap on & on top of ULA,  80x32 
-    NextReg TILEMAP_CONTROL_NR_6B,%11001001				; tilemap on & on top of ULA,  80x32 
-    NextReg TILEMAP_BASE_ADR_NR_6E,$44				    ; tilemap data $4400
-    NextReg TILEMAP_GFX_ADR_NR_6F,$40				    ; tilemap blocks 4 bit tiles $4000
-    NextReg PALETTE_CONTROL_NR_43,%00110000
+	nextreg NEXT_RESET_NR_02,0              		; wifi on 
+	nextreg PERIPHERAL_3_NR_08,$fe              		; no contention 
+	nextreg TURBO_CONTROL_NR_07,3                       ; 28mhz 
+	nextreg CLIP_TILEMAP_NR_1B,0                        ; Tilemap clipping 
+	nextreg CLIP_TILEMAP_NR_1B,159
+	nextreg CLIP_TILEMAP_NR_1B,0
+	nextreg CLIP_TILEMAP_NR_1B,255
+	NextReg TILEMAP_DEFAULT_ATTR_NR_6C,%00000000        ; tilemap on & on top of ULA,  80x32 
+	NextReg TILEMAP_CONTROL_NR_6B,%11001001				; tilemap on & on top of ULA,  80x32 
+	NextReg TILEMAP_BASE_ADR_NR_6E,$44				    ; tilemap data $4400
+	NextReg TILEMAP_GFX_ADR_NR_6F,$40				    ; tilemap blocks 4 bit tiles $4000
+	NextReg PALETTE_CONTROL_NR_43,%00110000
 end asm 
 
 dim idnum,tchar, quit, tcar,char,v,xx,yy,option,options,keydown,col,done,tindex,tries as ubyte 
@@ -58,11 +56,11 @@ dim b$,path$ as string
 dim l,size,bigsize as ulong
 
 #define MP3DOS(COMMAND,BANK) \
-    exx \
-    ld de,COMMAND \
-    ld c,BANK \
-    rst $08 \
-    db $94
+	exx \
+	ld de,COMMAND \
+	ld c,BANK \
+	rst $08 \
+	db $94
 
 asm 
 	di 
@@ -127,33 +125,33 @@ do
 	' border 0 
 
 	do 
-        if quit = 0 
-            'if start = 1 
-                start = 0 
-                ' search 
-                t$=""
-                keydown = 1  
-                AddText("Search : _ ",5)
-                TileInput(9,currTY,t$)
-                if len(t$)>0 
+		if quit = 0 
+			'if start = 1 
+				start = 0 
+				' search 
+				t$=""
+				keydown = 1  
+				AddText("Search : _ ",5)
+				TileInput(9,currTY,t$)
+				if len(t$)>0 
 					AddText("Searching for : "+t$,13)
 					ShowHeader()
-                    term$=t$
+					term$=t$
 					page = 0
-                    'dot$="http get -b 20 -h zxdb.remysharp.com -u /?s="+t$+" -f /tmp/tmp.dat"
-                    dot$=mainsrch$+t$+" -v 1"
-                    oldsearch$=dot$
-                    quit = 1 
-                    option = 3 
+					'dot$="http get -b 20 -h zxdb.remysharp.com -u /?s="+t$+" -f /tmp/tmp.dat"
+					dot$=mainsrch$+t$+" -v 1"
+					oldsearch$=dot$
+					quit = 1 
+					option = 3 
 					tries = 0 
-                endif 	
-            'endif 
+				endif 	
+			'endif 
 		endif 
 	loop until quit = 1
 	
-    ' 
-    ' now process the options 
-    ' 
+	' 
+	' now process the options 
+	' 
 
 	if option = 1 			                        ' we want to download 
 
@@ -162,29 +160,29 @@ do
 		GetFileSize() 			                    ' populates bigsize ulong from file$
 
 		if bigsize = size 
-            AddText(sizefile$+" - Looks like we already have this file!",12)
+			AddText(sizefile$+" - Looks like we already have this file!",12)
 			option = 4 : keydown = 1 
 		else 
-            DownloadFile(file$)
-            option = 4
+			DownloadFile(file$)
+			option = 4
 		endif 
 		
 		if bigsize <>size							' does the download size not match the filesize?
 			
-            tries = 4
+			tries = 4
 
 			do 
-         		AddText("Retry "+str(4-tries)+"/4 - size mismatch : received "+str(bigsize)+", expected "+str(size),1)
+		 		AddText("Retry "+str(4-tries)+"/4 - size mismatch : received "+str(bigsize)+", expected "+str(size),1)
 				DownloadFile(file$)
 				GetFileSize() 			' populates bigsize ulong 
 				tries = tries - 1 
 			loop until bigsize = size or tries = 0
 
 			if bigsize = size
-                AddText("Downloaded "+str(bigsize)+" bytes - sizes match! ",5)
+				AddText("Downloaded "+str(bigsize)+" bytes - sizes match! ",5)
 
-                    option=4
-                    quit = 1
+					option=4
+					quit = 1
 
 			else 
 				option = 2
@@ -208,11 +206,11 @@ do
 			k = code inkey
 			if k = code "r" 
 				option=1 : quit = 1
-                exit do 
+				exit do 
 			elseif k>0 
 				option=0
 				quit = 0
-                exit do 
+				exit do 
 			endif 
 		loop 
 	endif 
@@ -225,29 +223,29 @@ do
 
 	endif 
 	
-    if option = 5					' do selector loop 	
+	if option = 5					' do selector loop 	
 		AddText("Use Cursor UP/DOWN, Cursor LEFT/RIGHT next/prev page",3)	
 		AddText("ENTER to download, s to search",3)		
 		Selector()                  ' offset will be set here 
 		if option = 1 
-        	SelectID()
+			SelectID()
 		endif 
-    endif 
+	endif 
 
 	if option = 4                   ' choose to play game or not 
 		PlayGame()
 	endif 
 
-    if option = 6 					' to view screen # not implemented 
-        option = 0 : quit = 0 
-    endif 
+	if option = 6 					' to view screen # not implemented 
+		option = 0 : quit = 0 
+	endif 
 
-    if option = 7                   ' update 
+	if option = 7                   ' update 
 		changedir(appdir$)
 
-        clearsection()
+		clearsection()
 		dot$="rm zxdb-dl.nex" : ExecDot(dot$)
-        AddText("Changing dir to "+appdir$,4)
+		AddText("Changing dir to "+appdir$,4)
 		dot$="http get -x -h zxbasic.uk -u /zxdb-dl/zxdb-dl.nex -f zxdb-dl.nex -v 2"
 		ExecDot(dot$)
 		file$="zxdb-dl.nex" : GetFileSize()
@@ -262,8 +260,8 @@ do
 		else 
 			AddText("Error downloading update",13+16)
 		endif 
-        
-    endif 
+		
+	endif 
 
 	 if option = 10 
 		asm 
@@ -277,7 +275,7 @@ do
 loop 
 
 sub ShowHeader()
-    ' displays the screens header info 
+	' displays the screens header info 
 	clearsection()
 	TextBlock(0,1,"Search results for : ",5)
 	TextBlock(23,1,t$,2)
@@ -288,9 +286,9 @@ sub ShowHeader()
 end sub
 
 sub PlayGame()
-    ' launches a game 
+	' launches a game 
 	colourrow(32)
-    AddText("Enter to play, c to change SaveDir or any other key to continue",13+16)
+	AddText("Enter to play, c to change SaveDir or any other key to continue",13+16)
 	' border 0 
 	keydown=1
 	do 
@@ -334,8 +332,8 @@ sub ProcessSearch()
 	dim ty,a,fc as ubyte 
 	dim offset,temp as uinteger
 
-    ' we have the data from the server in $e000, bank 40 
-    ' so we need to parse it 
+	' we have the data from the server in $e000, bank 40 
+	' so we need to parse it 
 
    if peek($e000)<>$0a and peek($e000)<>$00
 		ty=5
@@ -408,7 +406,7 @@ sub ProcessSearch()
 			else
 			option = 5 
 		endif 
-        TextBlock(0,ty+1,"Page : "+str(page+1)+" / Results : "+str(results-5),14)
+		TextBlock(0,ty+1,"Page : "+str(page+1)+" / Results : "+str(results-5),14)
 
 	elseif page >= 1
 		' if page > 0 and no results then go back a page 
@@ -427,7 +425,7 @@ sub ProcessSearch()
 			option = 3 : quit = 1
 		else 
 			TextBlock(0,5,"No results",1)	
-        	option = 0 : quit = 0 
+			option = 0 : quit = 0 
 		endif 
 
 	endif
@@ -438,30 +436,30 @@ end sub
 
 sub SelectID()
 
-    ' checks ID entered is between 0 and 15 
+	' checks ID entered is between 0 and 15 
 
 	if offset >=0 and offset <16
-        offset = (8*offset) 
-        asm : nextreg $57,40 : end asm 
-        ' name$=SplitString(s$,"^",2+offset)
-        'file$=SplitString(s$,"^",3+offset)
-        SplitString($e000,code "^",3+offset)	      ' get file file$ 
-        'file$=PeekString(2+@stringtemp)
-        PeekString2(@stringtemp,file$)
+		offset = (8*offset) 
+		asm : nextreg $57,40 : end asm 
+		' name$=SplitString(s$,"^",2+offset)
+		'file$=SplitString(s$,"^",3+offset)
+		SplitString($e000,code "^",3+offset)	      ' get file file$ 
+		'file$=PeekString(2+@stringtemp)
+		PeekString2(@stringtemp,file$)
 
-        'id$=SplitString(s$,"^",1+offset)
-        SplitString($e000,code "^",1+offset)	      ' get file id
-        'id$=PeekString(2+@stringtemp)
-        PeekString2(@stringtemp,id$)
+		'id$=SplitString(s$,"^",1+offset)
+		SplitString($e000,code "^",1+offset)	      ' get file id
+		'id$=PeekString(2+@stringtemp)
+		PeekString2(@stringtemp,id$)
 
-        'strsize$ = SplitString(s$,"^",4+offset)
-        SplitString($e000,code "^",4+offset)	      ' get file size
-        'strsize$=PeekString(2+@stringtemp)
-        PeekString2(@stringtemp,strsize$)
+		'strsize$ = SplitString(s$,"^",4+offset)
+		SplitString($e000,code "^",4+offset)	      ' get file size
+		'strsize$=PeekString(2+@stringtemp)
+		PeekString2(@stringtemp,strsize$)
 
-        SplitString($e000,code "^",7+offset)	      ' get file size
-        'loader$=PeekString(2+@stringtemp)
-        PeekString2(@stringtemp,loader$)
+		SplitString($e000,code "^",7+offset)	      ' get file size
+		'loader$=PeekString(2+@stringtemp)
+		PeekString2(@stringtemp,loader$)
 
 		if loader$="1"
 			loader$="1 - 128K mode"
@@ -475,22 +473,22 @@ sub SelectID()
 			loader$="0 - USR 0" 
 		endif 
 
-        size = val(strsize$)
+		size = val(strsize$)
 
-        AddText("File : "+file$+" ",2)
-        AddText("ID   : "+id$,3)
-        AddText("Size : "+strsize$,4)
-        AddText("Recommended loader : "+loader$,5+16)
+		AddText("File : "+file$+" ",2)
+		AddText("ID   : "+id$,3)
+		AddText("Size : "+strsize$,4)
+		AddText("Recommended loader : "+loader$,5+16)
 
-        dot$="http get -x -h zxdb.remysharp.com -u /v2/get/"+id$+" -f "+file$+" -v 2"
+		dot$="http get -x -h zxdb.remysharp.com -u /v2/get/"+id$+" -f "+file$+" -v 2"
 
-        asm : nextreg $57,1 : end asm 
-        option=1                    ' download 
-        quit = 1 
-    else
-        quit = 0
-        option = 0
-    endif 
+		asm : nextreg $57,1 : end asm 
+		option=1                    ' download 
+		quit = 1 
+	else
+		quit = 0
+		option = 0
+	endif 
 
 end sub
 
@@ -498,47 +496,47 @@ end sub
 
 sub Selector()
 
-    colourrow(32)
-    keydown = 1 
-    do 
+	colourrow(32)
+	keydown = 1 
+	do 
 
-        k = code inkey 
-        if k and keydown = 0  
-            if  k = 10          ' cursor down 
-                if rowyy<results-1 
-                    rowyy=rowyy+1 : colourrowdown(32)
-                endif 
-                
-            elseif k = 11       ' cursor up 
-                if rowyy>5
-                    rowyy=rowyy-1 : colourrowup(32)
-                endif 
-            elseif k = 102       ' f
+		k = code inkey 
+		if k and keydown = 0  
+			if  k = 10          ' cursor down 
+				if rowyy<results-1 
+					rowyy=rowyy+1 : colourrowdown(32)
+				endif 
+				
+			elseif k = 11       ' cursor up 
+				if rowyy>5
+					rowyy=rowyy-1 : colourrowup(32)
+				endif 
+			elseif k = 102       ' f
 
-                AddText("Loading Screen : ",3)
-                offset = rowyy-5 
-                option = 6 
-                exit do 
-            elseif k = 13       ' return
-                ' AddText("ID "+str(rowyy-5),2)
-                offset = rowyy-5 
-                option = 1
-                exit do 
+				AddText("Loading Screen : ",3)
+				offset = rowyy-5 
+				option = 6 
+				exit do 
+			elseif k = 13       ' return
+				' AddText("ID "+str(rowyy-5),2)
+				offset = rowyy-5 
+				option = 1
+				exit do 
 			
 			
-            elseif k = 8       ' left 
+			elseif k = 8       ' left 
 				' This will get the previous page if > 1
-               	if page > 0
+			   	if page > 0
 				   AddText("Requesting previous page...",6)
 			   		page = page - 1 : 
 					oldsearch$=mainsrch$+term$+"&p="+str(page)+" -v 1"
 					
 					option = 3					' process search 
-               		exit do 
+			   		exit do 
 				endif 
 
-            elseif k = 9       ' Right 
-                ' AddText("ID "+str(rowyy-5),2)
+			elseif k = 9       ' Right 
+				' AddText("ID "+str(rowyy-5),2)
 				if results-5 =9
 					page = page + 1 
 					AddText("Requesting next page...",6)
@@ -547,8 +545,8 @@ sub Selector()
 					option = 3 	' process search 		
 					exit do 	
 				endif 
-               
-            elseif k = 115       ' s to find 
+			   
+			elseif k = 115       ' s to find 
 				colourrow(32)
 				rowyy = 5 
 				offset = 16 
@@ -556,39 +554,39 @@ sub Selector()
 				quit = 0 
 				exit do 
 
-            endif
+			endif
 
-            keydown = 1 
-           
-        elseif k = 0 
+			keydown = 1 
+		   
+		elseif k = 0 
 
-            keydown = 0 
-        endif 
-        
-    loop 
+			keydown = 0 
+		endif 
+		
+	loop 
 
 end sub     
 
 
 Sub DownloadFile(file$)
-        ' downloads file with http
-        AddText("Downloading "+file$,6)	
+		' downloads file with http
+		AddText("Downloading "+file$,6)	
 		ExecDot(dot$)
 end sub 
 
 sub AddText(intext$ as string, colour as ubyte)
-    ' adds text to display 
-    currTY=currTY+1 
-    if currTY>24
-        asm
-            ld hl,$4400+(19*160)
-            ld de,$4400+(18*160)
-            ld bc,7*160
-            ldir 
-       end asm 
-        currTY=currTY-1
-    endif 
-    TextBlock(0,currTY,intext$,colour)
+	' adds text to display 
+	currTY=currTY+1 
+	if currTY>24
+		asm
+			ld hl,$4400+(19*160)
+			ld de,$4400+(18*160)
+			ld bc,7*160
+			ldir 
+	   end asm 
+		currTY=currTY-1
+	endif 
+	TextBlock(0,currTY,intext$,colour)
 end sub
 
 
@@ -599,11 +597,11 @@ Sub TileInput(txx as ubyte, tyy as ubyte,ret$ as string)
 	dim k as ubyte 
 	dim cf as ubyte												' cursor flash 
 	t$="" : cursor$="_ "
-    keydown = 1 												' ensure we loop delay until no keys are pressed 
-    WaitRetrace(100)											' delay 
+	keydown = 1 												' ensure we loop delay until no keys are pressed 
+	WaitRetrace(100)											' delay 
 	do 
-        
-        k = code inkey 
+		
+		k = code inkey 
 		if k and keydown = 0 											' first run skipped 
 			if k>31 and k < 127									' normal ascii 
 				t$=t$+chr k 	
@@ -625,8 +623,8 @@ Sub TileInput(txx as ubyte, tyy as ubyte,ret$ as string)
 				keydown = 1 
 			endif 
 		elseif k = 0  						
-            keydown = 0 
-        endif 
+			keydown = 0 
+		endif 
 		
 		WaitRetrace(1)
 
@@ -640,27 +638,27 @@ Sub TileInput(txx as ubyte, tyy as ubyte,ret$ as string)
 			cf=cf-1
 		endif 
 	
-    loop 
+	loop 
 
 	if t$(0)="#" 
 		Directive()
 	endif 
-    
+	
 	' border 0
 end sub 
 
 sub Directive()
-    dim tb as ubyte 
+	dim tb as ubyte 
 	option = 0 : quit = 0 
-    if t$="#update"
-        AddText("Downloading update",5)
-        option = 7 : quit = 1 
-    elseif t$(1)="s"
-        tb = val (t$(2))
-        if tb>=0 and tb<=6
-            SetSpeed(tb)
+	if t$="#update"
+		AddText("Downloading update",5)
+		option = 7 : quit = 1 
+	elseif t$(1)="s"
+		tb = val (t$(2))
+		if tb>=0 and tb<=6
+			SetSpeed(tb)
 			SaveCFG()
-        endif 
+		endif 
 	elseif t$(1 to 2)="cd"
 	 	if len(t$(4 to ))>0
 		 	AddText(str(len(t$(4 to ))),4)
@@ -694,7 +692,7 @@ sub Directive()
 		GetHTTPver()
 	elseif t$(1)="q" 
 	 	option = 10 : quit = 1 
-    endif 
+	endif 
 	t$=""
 end sub
 
@@ -740,25 +738,25 @@ sub SetSpeed(choice as ubyte)
 	
 	baud = choice 
 
-    b$="115200"
-    if baud = 0 
-        b$="115200"
-    elseif baud = 1 
-        b$="57600"
-    elseif baud = 2 
-        b$="19200"
-    elseif baud = 3 
-        b$="230400"
-    elseif baud = 4 
-        b$="460800"
-    elseif baud = 5 
-        b$="576000"
-    elseif baud = 6 
-        b$="1152000"
-    endif 
-    AddText("Baud set to : "+b$,8)
-    dot$="espbaud -dq "+b$ 
-    ExecDot(dot$)
+	b$="115200"
+	if baud = 0 
+		b$="115200"
+	elseif baud = 1 
+		b$="57600"
+	elseif baud = 2 
+		b$="19200"
+	elseif baud = 3 
+		b$="230400"
+	elseif baud = 4 
+		b$="460800"
+	elseif baud = 5 
+		b$="576000"
+	elseif baud = 6 
+		b$="1152000"
+	endif 
+	AddText("Baud set to : "+b$,8)
+	dot$="espbaud -dq "+b$ 
+	ExecDot(dot$)
 end sub 
 
 sub GetFileSize()
@@ -902,39 +900,39 @@ sub GetHTTPver()
 end sub 
 
 sub fastcall PeekMem(address as uinteger,delimeter as ubyte,byref outstring as string)
-    ' assign a string from a memory block until delimeter 
-    asm 
-        push namespace peekmem 
-        
-        ex      de, hl 
-        pop     hl 
-        pop     af          ; delimeter 
-        ex      (sp),hl         
-        ;' de string ram 
-        ;' hl source data 
-        ;' now copy to string temp
-        push    hl 
-        ex      de, hl 
-        ld      de,.LABEL._stringtemp+2
-        ld      bc,0 
-    copyloop:
-        cp      (hl)                 ; compare with a / delimeter 
-        jr      z,endcopy            ; we matched 
-        push    bc 
-        ldi 
-        pop     bc 
-        inc     c
-        jr      nz,copyloop          ; loop while c<>0
-        dec     c 
-    endcopy:
-        ld      (.LABEL._stringtemp),bc 
-        pop     hl 
-        ld      de,.LABEL._stringtemp
-        ; de = string data 
-        ; hl = string 
-        pop     namespace
-        jp      .core.__STORE_STR
-    end asm 
+	' assign a string from a memory block until delimeter 
+	asm 
+		push namespace peekmem 
+		
+		ex      de, hl 
+		pop     hl 
+		pop     af          ; delimeter 
+		ex      (sp),hl         
+		;' de string ram 
+		;' hl source data 
+		;' now copy to string temp
+		push    hl 
+		ex      de, hl 
+		ld      de,.LABEL._stringtemp+2
+		ld      bc,0 
+	copyloop:
+		cp      (hl)                 ; compare with a / delimeter 
+		jr      z,endcopy            ; we matched 
+		push    bc 
+		ldi 
+		pop     bc 
+		inc     c
+		jr      nz,copyloop          ; loop while c<>0
+		dec     c 
+	endcopy:
+		ld      (.LABEL._stringtemp),bc 
+		pop     hl 
+		ld      de,.LABEL._stringtemp
+		; de = string data 
+		; hl = string 
+		pop     namespace
+		jp      .core.__STORE_STR
+	end asm 
 
 end sub 
 
@@ -964,7 +962,7 @@ SUB SNAPLOAD(snafilename as string)
 end sub 
 
 sub executebasic(command as string)
-    asm 
+	asm 
    ; ; BREAK 
 		push ix 
 		; hl = start of string 
@@ -997,11 +995,11 @@ sub executebasic(command as string)
 		ld 		sp,0
 		nextreg $56,0
 		pop 	ix 
-    end asm 
+	end asm 
 end sub
 
 sub ExecDot(execfilename as string)
-    ASM 
+	ASM 
 		; dont include the period eg "nexload myfile.nex" 
 		; string pointer in hl 
 		PROC 
@@ -1050,144 +1048,144 @@ sub ExecDot(execfilename as string)
 		; ld		sp,0 								; sfc from above 
 		; di         
 		ENDP		
-    end asm 
+	end asm 
 end sub 
 
 Sub fastcall SplitString(source as uinteger, needle as ubyte, poision as ubyte) 
 
-    asm 
-    start2:
-            ; ; BREAK 
-            exx : pop de : exx                          ; store return address 
-            pop     af                                      ; a = neeedle off stack 
-            ld      (needle),a                               ; store value at (needle)
-            pop     af                                      ; position off stack 
-            ld      (source),hl                              ; sotre hl into source 
-            ld      de,needle                                ; point de to needle, hl = source, a position 
-            push    ix : push bc 
+	asm 
+	start2:
+			; ; BREAK 
+			exx : pop de : exx                          ; store return address 
+			pop     af                                      ; a = neeedle off stack 
+			ld      (needle),a                               ; store value at (needle)
+			pop     af                                      ; position off stack 
+			ld      (source),hl                              ; sotre hl into source 
+			ld      de,needle                                ; point de to needle, hl = source, a position 
+			push    ix : push bc 
 
-            call    getstringsplit
+			call    getstringsplit
 
-            pop bc : pop ix 				
-            exx : push de : exx                         ; restore ret address 
+			pop bc : pop ix 				
+			exx : push de : exx                         ; restore ret address 
 
-            ret                                         ; return 
+			ret                                         ; return 
 
 getstringsplit:
-            ; hl = source 
-            ; de = needle 
-            ; a = index to get 
-                    ; out hl = point to string or zero if not found
-            
-            ld      (source),hl									; save index 
+			; hl = source 
+			; de = needle 
+			; a = index to get 
+					; out hl = point to string or zero if not found
+			
+			ld      (source),hl									; save index 
 			ld      hl,0
-            ld      (stringtemp),hl
-            call    countdelimters                             ; 
-            ld      ix,currentindex                              ; point ix to index table 
-            ld      hl,(source)                                    ; source string 
-    
-            ld      (indextoget),a                               ; save index to get 
-            or      a : jr z,getfirstindex                       
-    
-    subloop:
-            ld      de,needle                                    ; point to needle 
-            ld      a,(de)                                       ; get needle
-            ld      bc,0
-            cpir 
-            jr      z,foundneedle
-            ret 
-    
-    foundneedle:
-            ; hl = location
-            push    hl                                         ; save hl on stack 
-            ld      b,a                                          ; save needle in b 
-            inc     (ix+0)                                      ; inc currentindex 
-            ld      a,(indextoget)                               ; get the index we want to look for
-            cp      (ix+0)                                       ; does it match what we're on?
-            jr      z,wefoundourindex                            ; found our index 
-            pop     hl                                          ; pop hl from stack
-            jr      subloop                                      ; loop around 
-    
-    getfirstindex:
-            ; used when index is 0 
-            push    hl 
-            ld      a,(needle) : ld b,a : ld c,$ff               ; max  size of string out = $ff
-    
-    wefoundourindex:
-            ; hl = start of string slice 
-            ld      de,stringtemp+2                                ; tempstring save two bytes for length of string
+			ld      (stringtemp),hl
+			call    countdelimters                             ; 
+			ld      ix,currentindex                              ; point ix to index table 
+			ld      hl,(source)                                    ; source string 
+	
+			ld      (indextoget),a                               ; save index to get 
+			or      a : jr z,getfirstindex                       
+	
+	subloop:
+			ld      de,needle                                    ; point to needle 
+			ld      a,(de)                                       ; get needle
+			ld      bc,0
+			cpir 
+			jr      z,foundneedle
+			ret 
+	
+	foundneedle:
+			; hl = location
+			push    hl                                         ; save hl on stack 
+			ld      b,a                                          ; save needle in b 
+			inc     (ix+0)                                      ; inc currentindex 
+			ld      a,(indextoget)                               ; get the index we want to look for
+			cp      (ix+0)                                       ; does it match what we're on?
+			jr      z,wefoundourindex                            ; found our index 
+			pop     hl                                          ; pop hl from stack
+			jr      subloop                                      ; loop around 
+	
+	getfirstindex:
+			; used when index is 0 
+			push    hl 
+			ld      a,(needle) : ld b,a : ld c,$ff               ; max  size of string out = $ff
+	
+	wefoundourindex:
+			; hl = start of string slice 
+			ld      de,stringtemp+2                                ; tempstring save two bytes for length of string
 
-    wefoundourindexloop:
-            ld      a,(hl)                                       ; 
-            or      a : jr z,copyends                            ; is this next char zero? 
-            cp      b : jr z,copyends                            ; or the needle?
-            ldi                                             ; no then copy to tempstring
-            jr      wefoundourindexloop                          ; and keep looping 
-    
-    copyends:
-            ex      de,hl                                        ; swap de / hl 
-            ld      (hl), 0                                      ; zero terminate temp string
-            xor     a : ld (currentindex),a                     ; reset current index for next run 
-            pop     hl                                          ; pop hl off stack 
-            ld      hl,stringtemp+2                                ; point to start of tempstring 
-            ld      bc,0                                          ; b as length 
+	wefoundourindexloop:
+			ld      a,(hl)                                       ; 
+			or      a : jr z,copyends                            ; is this next char zero? 
+			cp      b : jr z,copyends                            ; or the needle?
+			ldi                                             ; no then copy to tempstring
+			jr      wefoundourindexloop                          ; and keep looping 
+	
+	copyends:
+			ex      de,hl                                        ; swap de / hl 
+			ld      (hl), 0                                      ; zero terminate temp string
+			xor     a : ld (currentindex),a                     ; reset current index for next run 
+			pop     hl                                          ; pop hl off stack 
+			ld      hl,stringtemp+2                                ; point to start of tempstring 
+			ld      bc,0                                          ; b as length 
 
-    genlenthtloop:
-            ld      a,(hl) : or a : jr z,donelength : inc c : ld a,c : or a : jr z,donelength : inc hl : jr genlenthtloop 
+	genlenthtloop:
+			ld      a,(hl) : or a : jr z,donelength : inc c : ld a,c : or a : jr z,donelength : inc hl : jr genlenthtloop 
 
-    donelength:
-            ld      hl,stringtemp : ld a,c : ld (hl),a : inc hl : ld a,b : ld (hl),a 
-            ret                                             ; done ret
-    
-    countdelimters
-            ld      c,a                                          ; save index count 
-            ld      hl,totalindex
-            ld      (hl),0
-            ld      de,(source)
-            ld      hl,needle
-            ld      b,(hl)                                       ; pop needle into b 
-    
-    countdelimtersloop: 
-            ld a,(de) : or a : jp z,indexcountdone          ; retrun if zero found
-            cp b : jr z,increasedelimetercount        
-            inc de 
-            jr countdelimtersloop
-    
-    indexcountdone: 
-            ld      a,(totalindex)
-            cp      c
-            jr      c,strfailed 
-            ld      a,c
-            ret  
-    
-    strfailed:
-            pop     hl
-            ld      hl,0
-            ld      (stringtemp),hl
-            ret 
-    
-    increasedelimetercount:
-            ld      hl,totalindex
-            inc     (hl)
+	donelength:
+			ld      hl,stringtemp : ld a,c : ld (hl),a : inc hl : ld a,b : ld (hl),a 
+			ret                                             ; done ret
+	
+	countdelimters
+			ld      c,a                                          ; save index count 
+			ld      hl,totalindex
+			ld      (hl),0
+			ld      de,(source)
+			ld      hl,needle
+			ld      b,(hl)                                       ; pop needle into b 
+	
+	countdelimtersloop: 
+			ld a,(de) : or a : jp z,indexcountdone          ; retrun if zero found
+			cp b : jr z,increasedelimetercount        
+			inc de 
+			jr countdelimtersloop
+	
+	indexcountdone: 
+			ld      a,(totalindex)
+			cp      c
+			jr      c,strfailed 
+			ld      a,c
+			ret  
+	
+	strfailed:
+			pop     hl
+			ld      hl,0
+			ld      (stringtemp),hl
+			ret 
+	
+	increasedelimetercount:
+			ld      hl,totalindex
+			inc     (hl)
 			inc     de 
-            jr      countdelimtersloop
-    
-    totalindex:
-            db      0 
-    
-    currentindex:
-            db      0     
-    
-    indextoget:
-            db      0 
+			jr      countdelimtersloop
+	
+	totalindex:
+			db      0 
+	
+	currentindex:
+			db      0     
+	
+	indextoget:
+			db      0 
 
-    source:
-            dw      0000
-    needle:
-            db      "^"
-            db      0 
-    
-    end asm 
+	source:
+			dw      0000
+	needle:
+			db      "^"
+			db      0 
+	
+	end asm 
 
 end sub 
 
@@ -1235,7 +1233,7 @@ sub TextBlock(txx as ubyte, tyy as ubyte, helptextin as string, col as ubyte)
 		add     a,a
 		ld      (xpos+1),a 					; save the xpos 
 		ld      a,(ix+7)
-    	and     31 							; line 32 is max line 
+		and     31 							; line 32 is max line 
 		ld      e,a 						; save in e 
 		ld      hl,$4400 					; point hl to start of textmap area 
 		ld      d,160						; text map is 160 bytes wide (tile + attribute * 80)
@@ -1288,46 +1286,46 @@ end sub
 ' end sub 
 
 sub fastcall PeekString2(address as uinteger,byref outstring as string)
-    asm  
-        ex      de, hl 
-        pop     hl 
-        ex      (sp), hl
-        jp      .core.__STORE_STR 
-    end asm 
+	asm  
+		ex      de, hl 
+		pop     hl 
+		ex      (sp), hl
+		jp      .core.__STORE_STR 
+	end asm 
 end sub
 
 
 sub fastcall PeekMemLen(address as uinteger,length as uinteger,byref outstring as string)
-    ' assign a string from a memory block with a set length 
-    asm 
+	' assign a string from a memory block with a set length 
+	asm 
 
-        ex      de, hl 
-        pop     hl 
-        pop     bc
-        ex      (sp),hl         
-        ;' de string ram 
-        ;' hl source data 
-        ;' now copy to string temp
-        
-        push    hl 
-        ex      de, hl 
-        ld      (stringtemp),bc 
-        ld      de,stringtemp+2
-        ldir 
+		ex      de, hl 
+		pop     hl 
+		pop     bc
+		ex      (sp),hl         
+		;' de string ram 
+		;' hl source data 
+		;' now copy to string temp
+		
+		push    hl 
+		ex      de, hl 
+		ld      (stringtemp),bc 
+		ld      de,stringtemp+2
+		ldir 
 
-        pop     hl 
-        ld      de,stringtemp
-        ; de = string data 
-        ; hl = string 
-        jp      .core.__STORE_STR
+		pop     hl 
+		ld      de,stringtemp
+		; de = string data 
+		; hl = string 
+		jp      .core.__STORE_STR
 
-    end asm 
+	end asm 
 
 end sub 
 
 sub changedir(dir as string)
  	asm 
-	    ; BREAK 
+		; BREAK 
 		f_esxdos					equ $08
 		m_getsetdrv 			    equ $89
 		f_opendir                   equ $a3 ;(163) open directory for reading 
@@ -1343,8 +1341,8 @@ sub changedir(dir as string)
 		ld      de,.LABEL._filename     
 		ldir                                ; copy into buffer 
 		xor     a  
-        ld      (de),a                      ; EOL terminator 
-        ld      (._tempbyte),a 
+		ld      (de),a                      ; EOL terminator 
+		ld      (._tempbyte),a 
 		ld      a,'*'
 		rst     f_esxdos : db m_getsetdrv	
 		and		%111		; only want bits 2 - 0 should be 0 if no error
@@ -1355,7 +1353,7 @@ chdirsuccess:
 
 		ld      (handle),a
 		ld      ix,.LABEL._filename
-        rst     f_esxdos : db f_changecwd	
+		rst     f_esxdos : db f_changecwd	
 		
 		ld      (._tempbyte),a 
 		ld      a,(handle) 
@@ -1462,12 +1460,12 @@ sub colourrow(colour as ubyte)
 		mul 	d,e 
 		add 	hl,de			; start of row
 		pop af 				; get colour
-        and 	%01111111
+		and 	%01111111
 		ld 		b,80
 rowloop:		
 		inc 	hl 
-        ld 		a,(hl)
-        xor 	32         ; adds to the colour 
+		ld 		a,(hl)
+		xor 	32         ; adds to the colour 
 		ld 		(hl),a 
 		inc 	hl 
 		djnz 	rowloop
@@ -1481,8 +1479,8 @@ sub colourrowdown(colour as ubyte)
 	
 		asm 
 	;	; BREAK 
-        PROC 
-        LOCAL rowloop, resetlp
+		PROC 
+		LOCAL rowloop, resetlp
 
 		ld 		hl,$4400             ; start of tile data 
 		ld 		a,(._rowyy)
@@ -1490,28 +1488,28 @@ sub colourrowdown(colour as ubyte)
 		ld 		e,160
 		mul		d, e 
 		add 	hl,de			; start of row
-        push 	hl             ; save this address 
-        ; here we are at the start of the line 
+		push 	hl             ; save this address 
+		; here we are at the start of the line 
 
-        add 	hl,$ff60        ; sub 1 line 160 chrs 
-        ld 		b,80
+		add 	hl,$ff60        ; sub 1 line 160 chrs 
+		ld 		b,80
 resetlp: 
-        inc 	hl 
-        ld 		a,(hl)
-        xor 	32 
-        ld 		(hl),a
-        inc 	hl 
-        djnz resetlp
+		inc 	hl 
+		ld 		a,(hl)
+		xor 	32 
+		ld 		(hl),a
+		inc 	hl 
+		djnz resetlp
 
-        pop 	hl 
-        and 	%01111111
+		pop 	hl 
+		and 	%01111111
 
 		ld 		b,80
-      
+	  
 rowloop:		
 		inc 	hl 
-        ld 		a,(hl)
-        add 	a,32            ; adds to the colour 
+		ld 		a,(hl)
+		add 	a,32            ; adds to the colour 
 		ld 		(hl),a 
 		inc 	hl 
 		djnz 	rowloop
@@ -1524,32 +1522,32 @@ sub colourrowup(colour as ubyte)
 	
 		asm 
 	;	; BREAK 
-        PROC 
-        LOCAL rowloop, resetlp
+		PROC 
+		LOCAL rowloop, resetlp
 		ld 		hl,$4400             ; start of tile data 
 		ld 		a,(._rowyy) : ld d,a : ld e,160 : MUL_DE ; get offset 
 		add 	hl,de			; start of row
-        push 	hl             ; save this address 
-        ; here we are at the start of the line 
+		push 	hl             ; save this address 
+		; here we are at the start of the line 
 
-        add 	hl,160       ; sub 1 line 160 chrs 
-        ld 		b,80
-resetlp: 
-        inc 	hl 
-        ld 		a,(hl)
-        sub 	32
-        ld 		(hl),a
-        inc 	hl 
-        djnz 	resetlp
-
-        pop 	hl 
-        and 	%01111111
+		add 	hl,160       ; sub 1 line 160 chrs 
 		ld 		b,80
-        
+resetlp: 
+		inc 	hl 
+		ld 		a,(hl)
+		sub 	32
+		ld 		(hl),a
+		inc 	hl 
+		djnz 	resetlp
+
+		pop 	hl 
+		and 	%01111111
+		ld 		b,80
+		
 rowloop:		
 		inc 	hl 
-        ld 		a,(hl)
-        add 	a,32            ; adds to the colour 
+		ld 		a,(hl)
+		add 	a,32            ; adds to the colour 
 		ld 		(hl),a 
 		inc 	hl 
 		djnz 	rowloop
