@@ -798,7 +798,7 @@ sub GetFileSize()
 			jr      z,donefsizefs 
 			inc     hl 											            ; move along to start of string 
 			ld      de,.LABEL._filename
-			ldir : ex de, hl : ld (hl),b                                            ; ld (hl) = b = 0 
+			ldir : ex de, hl : ld (hl),b                                    ; ld (hl) = b = 0 
 
 			ld 		a, '*' 	
 			push 	ix 
@@ -945,12 +945,12 @@ SUB SNAPLOAD(snafilename as string)
 				ld a,$FF : ld (de),a
 				
 		
-				;ld hl,$0001  	; H=banktype (ZX=0, 1=MMC); L=reason (1=allocate)
+				;ld hl,$0001  				; H=banktype (ZX=0, 1=MMC); L=reason (1=allocate)
 				ld hl,.LABEL._filename
 				exx
-				ld c,7 			; RAM 7 required for most IDEDOS calls
-				ld de,$00fd 	; IDE_SNAPLOAD ($00FD)
-				rst $8:defb $94 ; M_P3DOS
+				ld c,7 						; RAM 7 required for most IDEDOS calls
+				ld de,$00fd 				; IDE_SNAPLOAD ($00FD)
+				rst $8:defb $94 			; M_P3DOS
 				jp nc,failed
 				ld a,e 
 				jr notfailed
@@ -981,14 +981,14 @@ sub executebasic(command as string)
 
 		ld sp,(.core.__CALL_BACK__)
 
-		ld 		b, 0                         ; IN: B=0, tokenise BASIC line
-		ld 		c, 28                         ; IN: C=8K BANK containing buffer for untokenised BASIC line
+		ld 		b, 0                        ; IN: B=0, tokenise BASIC line
+		ld 		c, 28                       ; IN: C=8K BANK containing buffer for untokenised BASIC line
 		ld 		hl,0                        ; IN: HL=offset in BANK of buffer for untokenised line
-		MP3DOS($01D8,0)               ; API IDE_TOKENIZE ($01D8, BANK 0) (see NextZXOS_and_esxDOS_APIs.pdf page 22)
-		jr 		nc, Error                    ; If Carry flag unset, tokenize failed
-		jr 		z, Error                     ; If Zero flag set, tokenize failed
+		MP3DOS($01D8,0)               		; API IDE_TOKENIZE ($01D8, BANK 0) (see NextZXOS_and_esxDOS_APIs.pdf page 22)
+		jr 		nc, Error                   ; If Carry flag unset, tokenize failed
+		jr 		z, Error                    ; If Zero flag set, tokenize failed
 
-		MP3DOS($01C0,0)              ; API IDE_BASIC ($01C0, BANK 0) (see NextZXOS_API.pdf page 18)
+		MP3DOS($01C0,0)              		; API IDE_BASIC ($01C0, BANK 0) (see NextZXOS_API.pdf page 18)
 	Error:
 
 	outstack:
@@ -1386,7 +1386,7 @@ Sub GetCWD()
 
 		successfs:
 		 	ld de,stringtemp+2										; point de to temp area 
-			ld hl,.LABEL._filename								; hl to source 
+			ld hl,.LABEL._filename									; hl to source 
 		BREAK 
 		fscopyloop;
 			ld a,(hl) : or a : jr z,startgenloopfs : ldi : jr fscopyloop ; if (hl)<>0 copy to (de)
@@ -1458,14 +1458,14 @@ sub colourrow(colour as ubyte)
 		ld 		d,a
 		ld 		e,160
 		mul 	d,e 
-		add 	hl,de			; start of row
-		pop af 				; get colour
+		add 	hl,de				; start of row
+		pop af 						; get colour
 		and 	%01111111
 		ld 		b,80
 rowloop:		
 		inc 	hl 
 		ld 		a,(hl)
-		xor 	32         ; adds to the colour 
+		xor 	32         			; adds to the colour 
 		ld 		(hl),a 
 		inc 	hl 
 		djnz 	rowloop
@@ -1487,11 +1487,11 @@ sub colourrowdown(colour as ubyte)
 		ld 		d,a
 		ld 		e,160
 		mul		d, e 
-		add 	hl,de			; start of row
-		push 	hl             ; save this address 
+		add 	hl,de				; start of row
+		push 	hl             		; save this address 
 		; here we are at the start of the line 
 
-		add 	hl,$ff60        ; sub 1 line 160 chrs 
+		add 	hl,$ff60        	; sub 1 line 160 chrs 
 		ld 		b,80
 resetlp: 
 		inc 	hl 
@@ -1509,7 +1509,7 @@ resetlp:
 rowloop:		
 		inc 	hl 
 		ld 		a,(hl)
-		add 	a,32            ; adds to the colour 
+		add 	a,32            	; adds to the colour 
 		ld 		(hl),a 
 		inc 	hl 
 		djnz 	rowloop
@@ -1525,12 +1525,15 @@ sub colourrowup(colour as ubyte)
 		PROC 
 		LOCAL rowloop, resetlp
 		ld 		hl,$4400             ; start of tile data 
-		ld 		a,(._rowyy) : ld d,a : ld e,160 : MUL_DE ; get offset 
-		add 	hl,de			; start of row
-		push 	hl             ; save this address 
+		ld 		a,(._rowyy)
+		ld 		d,a
+		ld 		e,160
+		mul		d,e  				; get offset 
+		add 	hl,de				; start of row
+		push 	hl             		; save this address 
 		; here we are at the start of the line 
 
-		add 	hl,160       ; sub 1 line 160 chrs 
+		add 	hl,160       		; sub 1 line 160 chrs 
 		ld 		b,80
 resetlp: 
 		inc 	hl 
